@@ -1,0 +1,122 @@
+{
+  "name": "reactome-text-to-speech",
+  "displayName": "Reactome-Text-to-Speech",
+  "description": "Easily generate audio using Google API Text-to-Speech",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.78.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "Text-to-Speech",
+      "properties": {
+        "reactomeTextToSpeech.credentials.mail": {
+          "type": "string",
+          "default": "reactome-text-to-speech@prj-ext-prod-reactomegsa-dr.iam.gserviceaccount.com",
+          "description": "Mail address from Google API credentials to be used"
+        },
+        "reactomeTextToSpeech.credentials.privateKey": {
+          "type": "string",
+          "default": "TO BE SET",
+          "description": "Private Key from Google API credentials to be used"
+        },
+        "reactomeTextToSpeech.parameters.languageCode": {
+          "type": "string",
+          "default": "en-US",
+          "description": "The language (and potentially also the region) of the voice expressed as a BCP-47 language tag, e.g. \"en-US\". This should not include a script tag (e.g. use \"cmn-cn\" rather than \"cmn-Hant-cn\"), because the script will be inferred from the input provided in the SynthesisInput. The TTS service will use this parameter to help choose an appropriate voice. Note that the TTS service may choose a voice with a slightly different language code than the one selected; it may substitute a different region (e.g. using en-US rather than en-CA if there isn't a Canadian voice available), or even a different language, e.g. using \"nb\" (Norwegian Bokmal) instead of \"no\" (Norwegian)\"."
+        },
+        "reactomeTextToSpeech.parameters.name": {
+          "type": "string",
+          "default": "en-US-Neural2-F",
+          "enum": [
+            "en-US-Neural2-A",
+            "en-US-Neural2-C",
+            "en-US-Neural2-D",
+            "en-US-Neural2-E",
+            "en-US-Neural2-F",
+            "en-US-Neural2-I",
+            "en-US-Neural2-J"
+          ],
+          "enumDescriptions": [
+            "Male",
+            "Female",           
+            "Male",
+            "Female",
+            "Female",
+            "Male",
+            "Male"
+          ],
+          "description": "The name of the voice. If not set, the service will choose a voice based on the other parameters such as languageCode and gender."
+        },
+        "reactomeTextToSpeech.parameters.pitch": {
+          "type": "number",
+          "default": 0,
+          "minimum": -20,
+          "maximum": 20,
+          "description": "Speaking pitch, in the range [-20.0, 20.0]. 20 means increase 20 semitones from the original pitch. -20 means decrease 20 semitones from the original pitch."
+        },
+        "reactomeTextToSpeech.parameters.speakingRate": {
+          "type": "number",
+          "default": 1,
+          "minimum": 0.25,
+          "maximum": 4.0,
+          "description": "Speaking rate/speed, in the range [0.25, 4.0]. 1.0 is the normal native speed supported by the specific voice. 2.0 is twice as fast, and 0.5 is half as fast. If unset(0.0), defaults to the native 1.0 speed. Any other values < 0.25 or > 4.0 will return an error."
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "reactome-text-to-speech.synthesize",
+        "title": "Synthesize",
+        "icon": {
+          "dark": "resources/dark.svg",
+          "light": "resources/light.svg"
+        }
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "reactome-text-to-speech.synthesize",
+          "group": "navigation",
+          "when": "resourceFilename =~ /.+\\.txt$|.+\\.ssml$/g"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "dependencies": {
+    "@google-cloud/text-to-speech": "4.2.2"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.78.0",
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "16.x",
+    "@typescript-eslint/eslint-plugin": "^5.59.1",
+    "@typescript-eslint/parser": "^5.59.1",
+    "eslint": "^8.39.0",
+    "glob": "^8.1.0",
+    "mocha": "^10.2.0",
+    "typescript": "^5.0.4",
+    "ts-loader": "^9.4.2",
+    "webpack": "^5.81.0",
+    "webpack-cli": "^5.0.2",
+    "@vscode/test-electron": "^2.3.0"
+  }
+}
