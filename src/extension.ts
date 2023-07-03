@@ -31,25 +31,31 @@ export function activate(context: vscode.ExtensionContext) {
             }
         });
 
-		console.log("Synthesizing");
+        console.log("Synthesizing");
         // Performs the text-to-speech request
-        const [response] = await client.synthesizeSpeech(
-            {
-                input: input,
-                voice: {
-                    languageCode: configuration.parameters.languageCode,
-                    name: configuration.parameters.name
-                },
-                audioConfig: {
-                    audioEncoding: 'MP3',
-                    pitch: configuration.parameters.pitch, // between -20 and 20
-                    speakingRate: configuration.parameters.speakingRate // between 0.25 and 4
+        try {
+            const [response] = await client.synthesizeSpeech(
+                {
+                    input: input,
+                    voice: {
+                        languageCode: configuration.parameters.name.slice(0, 5),
+                        name: configuration.parameters.name
+                    },
+                    audioConfig: {
+                        audioEncoding: 'MP3',
+                        pitch: configuration.parameters.pitch, // between -20 and 20
+                        speakingRate: configuration.parameters.speakingRate // between 0.25 and 4
+                    }
                 }
-            }
-        );
-        // Write the binary audio content to a local file
-        const writeFile = util.promisify(fs.writeFile);
-        await writeFile(path.replace(/\.\w+$/g, ".mp3") || "", response.audioContent as string, 'binary');
+            );
+
+            // Write the binary audio content to a local file
+            const writeFile = util.promisify(fs.writeFile);
+            await writeFile(path.replace(/\.\w+$/g, ".mp3") || "", response.audioContent as string, 'binary');
+        } catch (e) {
+            vscode.window.showErrorMessage('' + e);
+        }
+
     });
 
     context.subscriptions.push(disposable);
